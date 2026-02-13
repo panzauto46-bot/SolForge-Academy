@@ -47,14 +47,14 @@ export default function LessonPage() {
         <div className="text-center">
           <p className="text-slate-500 dark:text-gray-400 mb-4">
             {!course
-              ? "Course not found"
-              : "Please connect to access lessons"}
+              ? t('lesson.courseNotFound')
+              : t('lesson.connectRequired')}
           </p>
           <button
             onClick={() => router.push("/courses")}
             className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-semibold"
           >
-            Browse Courses
+            {t('lesson.browseCourses')}
           </button>
         </div>
       </div>
@@ -138,7 +138,7 @@ export default function LessonPage() {
                 {t("lesson.certMinted")}
               </p>
               <p className="text-slate-400 dark:text-gray-500 text-xs mt-1 font-mono">
-                cNFT via Metaplex Bubblegum
+                {t('lesson.mintedViaBubblegum')}
               </p>
             </div>
             <div className="flex items-center justify-center gap-2 mb-6 text-amber-600 dark:text-amber-400">
@@ -152,7 +152,7 @@ export default function LessonPage() {
               }}
               className="w-full px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-semibold hover:from-purple-500 hover:to-cyan-500 transition-all"
             >
-              View Dashboard
+              {t('lesson.viewDashboard')}
             </button>
           </div>
         </div>

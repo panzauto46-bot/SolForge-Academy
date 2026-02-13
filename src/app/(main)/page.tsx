@@ -61,7 +61,7 @@ export default function HomePage() {
                 key={i}
                 className="p-6 rounded-2xl bg-white dark:bg-gray-900/50 border border-slate-200 dark:border-gray-800/50 hover:border-slate-300 dark:hover:border-gray-700 transition-all group shadow-sm hover:shadow-lg dark:shadow-none"
               >
-                <div className="text-3xl mb-3">{feat.icon}</div>
+                <div className="text-3xl mb-3" aria-hidden="true">{feat.icon}</div>
                 <h3 className="text-slate-900 dark:text-white font-semibold mb-2">{feat.title}</h3>
                 <p className="text-slate-500 dark:text-gray-400 text-sm leading-relaxed">{feat.desc}</p>
               </div>

@@ -123,7 +123,7 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
                 {t("auth.phantom")}
               </div>
               <div className="text-slate-400 dark:text-gray-500 text-xs">
-                Solana Wallet
+                {t("auth.solanaWallet")}
               </div>
             </div>
             {connecting ? (
@@ -151,7 +151,7 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
                 {t("auth.solflare")}
               </div>
               <div className="text-slate-400 dark:text-gray-500 text-xs">
-                Solana Wallet
+                {t("auth.solanaWallet")}
               </div>
             </div>
             {connecting ? (
@@ -226,7 +226,7 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
 
         {/* Info text */}
         <p className="text-center text-slate-400 dark:text-gray-600 text-xs mt-4">
-          Connect your wallet or social account to start learning
+          {t("auth.connectDescription")}
         </p>
       </DialogContent>
     </Dialog>

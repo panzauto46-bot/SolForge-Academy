@@ -11,6 +11,8 @@
   "dependencies": {
     "@auth/core": "^0.41.0",
     "@monaco-editor/react": "^4.7.0",
+    "@next/third-parties": "^16.1.6",
+    "@sentry/nextjs": "^10.38.0",
     "@solana/wallet-adapter-base": "^0.9.27",
     "@solana/wallet-adapter-react": "^0.15.39",
     "@solana/wallet-adapter-react-ui": "^0.9.39",

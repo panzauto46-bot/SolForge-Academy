@@ -16,12 +16,12 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-gray-950 pt-20 flex items-center justify-center transition-colors">
         <div className="text-center">
-          <p className="text-slate-500 dark:text-gray-400 mb-4">Please connect to view your dashboard</p>
+          <p className="text-slate-500 dark:text-gray-400 mb-4">{t('dash.connectRequired')}</p>
           <button
             onClick={() => router.push('/')}
             className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-semibold"
           >
-            Go Home
+            {t('dash.goHome')}
           </button>
         </div>
       </div>
@@ -79,7 +79,7 @@ export default function DashboardPage() {
                 style={{ width: `${xpProgress}%` }}
               />
             </div>
-            <p className="text-slate-400 dark:text-gray-600 text-xs mt-1">{Math.round(xpInBand)}/{xpBandSize} to next level</p>
+            <p className="text-slate-400 dark:text-gray-600 text-xs mt-1">{Math.round(xpInBand)}/{xpBandSize} {t('dash.toNextLevel')}</p>
           </div>
 
           <div className="p-5 rounded-2xl bg-white dark:bg-gray-900/80 border border-slate-200 dark:border-gray-800 backdrop-blur shadow-sm dark:shadow-none">
@@ -90,7 +90,7 @@ export default function DashboardPage() {
               <span className="text-slate-500 dark:text-gray-500 text-sm">{t('dash.level')}</span>
             </div>
             <div className="text-3xl font-bold text-slate-900 dark:text-white">{user.level}</div>
-            <p className="text-slate-400 dark:text-gray-600 text-xs mt-1">Builder Rank</p>
+            <p className="text-slate-400 dark:text-gray-600 text-xs mt-1">{t('dash.builderRank')}</p>
           </div>
 
           <div className="p-5 rounded-2xl bg-white dark:bg-gray-900/80 border border-slate-200 dark:border-gray-800 backdrop-blur shadow-sm dark:shadow-none">
@@ -101,7 +101,7 @@ export default function DashboardPage() {
               <span className="text-slate-500 dark:text-gray-500 text-sm">{t('dash.streak')}</span>
             </div>
             <div className="text-3xl font-bold text-slate-900 dark:text-white">{user.streak}</div>
-            <p className="text-slate-400 dark:text-gray-600 text-xs mt-1">days in a row</p>
+            <p className="text-slate-400 dark:text-gray-600 text-xs mt-1">{t('dash.daysInRow')}</p>
           </div>
 
           <div className="p-5 rounded-2xl bg-white dark:bg-gray-900/80 border border-slate-200 dark:border-gray-800 backdrop-blur shadow-sm dark:shadow-none">
@@ -112,7 +112,7 @@ export default function DashboardPage() {
               <span className="text-slate-500 dark:text-gray-500 text-sm">{t('dash.completed')}</span>
             </div>
             <div className="text-3xl font-bold text-slate-900 dark:text-white">{user.completedCourses.length}</div>
-            <p className="text-slate-400 dark:text-gray-600 text-xs mt-1">of {courses.length} courses</p>
+            <p className="text-slate-400 dark:text-gray-600 text-xs mt-1">{t('dash.ofCourses').replace('{total}', String(courses.length))}</p>
           </div>
         </div>
 
@@ -305,7 +305,7 @@ export default function DashboardPage() {
                           </div>
                         </div>
                         <p className="text-slate-400 dark:text-gray-600 text-xs mt-2">
-                          Minted: {new Date(cert.mintedAt).toLocaleDateString()}
+                          {t('dash.minted')} {new Date(cert.mintedAt).toLocaleDateString()}
                         </p>
                       </div>
                     );

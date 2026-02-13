@@ -14,12 +14,12 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-gray-950 pt-20 flex items-center justify-center transition-colors">
         <div className="text-center">
-          <p className="text-slate-500 dark:text-gray-400 mb-4">Please connect to view your profile</p>
+          <p className="text-slate-500 dark:text-gray-400 mb-4">{t('profile.connectRequired')}</p>
           <button
             onClick={() => router.push('/')}
             className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-semibold"
           >
-            Go Home
+            {t('profile.goHome')}
           </button>
         </div>
       </div>
@@ -35,7 +35,7 @@ export default function ProfilePage() {
             {user.avatar}
           </div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">{user.displayName}</h1>
-          <p className="text-slate-400 dark:text-gray-500 text-sm mb-1 capitalize">{user.authProvider} Account</p>
+          <p className="text-slate-400 dark:text-gray-500 text-sm mb-1 capitalize">{t('profile.account').replace('{provider}', user.authProvider)}</p>
           {user.walletAddress && (
             <p className="text-slate-400 dark:text-gray-500 text-xs font-mono flex items-center justify-center gap-1">
               <Wallet size={12} />
@@ -52,7 +52,7 @@ export default function ProfilePage() {
             </div>
             <div>
               <p className="text-2xl font-bold text-slate-900 dark:text-white">{user.xp}</p>
-              <p className="text-slate-400 dark:text-gray-500 text-xs">Total XP</p>
+              <p className="text-slate-400 dark:text-gray-500 text-xs">{t('profile.totalXp')}</p>
             </div>
           </div>
           <div className="p-5 rounded-2xl bg-white dark:bg-gray-900/80 border border-slate-200 dark:border-gray-800 flex items-center gap-4">
@@ -61,7 +61,7 @@ export default function ProfilePage() {
             </div>
             <div>
               <p className="text-2xl font-bold text-slate-900 dark:text-white">{user.streak}</p>
-              <p className="text-slate-400 dark:text-gray-500 text-xs">Day Streak</p>
+              <p className="text-slate-400 dark:text-gray-500 text-xs">{t('profile.dayStreak')}</p>
             </div>
           </div>
           <div className="p-5 rounded-2xl bg-white dark:bg-gray-900/80 border border-slate-200 dark:border-gray-800 flex items-center gap-4">
@@ -70,7 +70,7 @@ export default function ProfilePage() {
             </div>
             <div>
               <p className="text-2xl font-bold text-slate-900 dark:text-white">Lv. {user.level}</p>
-              <p className="text-slate-400 dark:text-gray-500 text-xs">Builder Level</p>
+              <p className="text-slate-400 dark:text-gray-500 text-xs">{t('profile.builderLevel')}</p>
             </div>
           </div>
           <div className="p-5 rounded-2xl bg-white dark:bg-gray-900/80 border border-slate-200 dark:border-gray-800 flex items-center gap-4">
@@ -79,7 +79,7 @@ export default function ProfilePage() {
             </div>
             <div>
               <p className="text-2xl font-bold text-slate-900 dark:text-white">{user.completedCourses.length}</p>
-              <p className="text-slate-400 dark:text-gray-500 text-xs">Courses Done</p>
+              <p className="text-slate-400 dark:text-gray-500 text-xs">{t('profile.coursesDone')}</p>
             </div>
           </div>
         </div>

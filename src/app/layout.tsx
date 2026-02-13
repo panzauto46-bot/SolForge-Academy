@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
 });
+
+const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 export const metadata: Metadata = {
   title: "SolForge Academy — The Ultimate Interactive Hub for Solana Native Builders",
@@ -16,7 +20,9 @@ export const metadata: Metadata = {
     title: "SolForge Academy",
     description: "The Ultimate Interactive Hub for Solana Native Builders",
     type: "website",
+    locale: "en_US",
   },
+  metadataBase: new URL("https://solforge-academy.vercel.app"),
 };
 
 export default function RootLayout({
@@ -31,6 +37,7 @@ export default function RootLayout({
           {children}
         </Providers>
       </body>
+      {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
     </html>
   );
 }

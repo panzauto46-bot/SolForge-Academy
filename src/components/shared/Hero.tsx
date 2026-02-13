@@ -39,9 +39,9 @@ export function Hero() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/70 dark:bg-gray-800/60 border border-slate-200 dark:border-gray-700/50 mb-8 shadow-sm dark:shadow-none">
             <div className="w-2 h-2 rounded-full bg-green-500 dark:bg-green-400 animate-pulse" />
-            <span className="text-sm text-slate-600 dark:text-gray-300">Solana Devnet</span>
+            <span className="text-sm text-slate-600 dark:text-gray-300">{t('hero.network')}</span>
             <span className="text-slate-300 dark:text-gray-600">&bull;</span>
-            <span className="text-sm text-slate-500 dark:text-gray-400">Season 1 Live</span>
+            <span className="text-sm text-slate-500 dark:text-gray-400">{t('hero.season')}</span>
           </div>
 
           {/* Title */}
@@ -97,7 +97,7 @@ export function Hero() {
           </div>
 
           {/* Scroll indicator */}
-          <div className="mt-16 flex flex-col items-center gap-2 text-slate-300 dark:text-gray-600 animate-bounce">
+          <div className="mt-16 flex flex-col items-center gap-2 text-slate-300 dark:text-gray-600 animate-bounce" aria-hidden="true">
             <div className="w-6 h-10 border-2 border-slate-300 dark:border-gray-700 rounded-full flex items-start justify-center p-1">
               <div className="w-1.5 h-3 bg-slate-400 dark:bg-gray-500 rounded-full" />
             </div>

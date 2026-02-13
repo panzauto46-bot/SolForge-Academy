@@ -105,11 +105,11 @@ export default function LeaderboardPage() {
         {/* Full Leaderboard */}
         <div className="rounded-2xl bg-white dark:bg-gray-900/80 border border-slate-200 dark:border-gray-800 overflow-hidden shadow-sm dark:shadow-none">
           <div className="grid grid-cols-[60px_1fr_100px_80px] sm:grid-cols-[60px_1fr_120px_100px_100px] gap-2 p-4 bg-slate-50 dark:bg-gray-800/50 text-slate-500 dark:text-gray-400 text-xs font-medium uppercase tracking-wider border-b border-slate-200 dark:border-gray-800">
-            <div>Rank</div>
-            <div>Builder</div>
+            <div>{t('leaderboard.rank')}</div>
+            <div>{t('leaderboard.builder')}</div>
             <div className="text-right">XP</div>
-            <div className="text-right hidden sm:block">Streak</div>
-            <div className="text-right">Wallet</div>
+            <div className="text-right hidden sm:block">{t('leaderboard.streak')}</div>
+            <div className="text-right">{t('leaderboard.wallet')}</div>
           </div>
           {displayLeaderboard.map((entry) => (
             <div

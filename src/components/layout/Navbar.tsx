@@ -100,6 +100,9 @@ export function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setLangOpen(!langOpen)}
+                  aria-label="Select language"
+                  aria-expanded={langOpen}
+                  aria-haspopup="listbox"
                   className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-gray-800/50 transition-all"
                 >
                   <Globe size={16} />
@@ -134,7 +137,7 @@ export function Navbar() {
                     className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center text-white font-bold text-sm overflow-hidden"
                   >
                     {user?.image ? (
-                      <img src={user.image} alt={user.displayName} className="w-full h-full object-cover" />
+                      <img src={user.image} alt={user.displayName || "User avatar"} className="w-full h-full object-cover" />
                     ) : (
                       user?.avatar
                     )}
@@ -163,6 +166,8 @@ export function Navbar() {
               {/* Mobile Menu Toggle */}
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
+                aria-label={mobileOpen ? "Close menu" : "Open menu"}
+                aria-expanded={mobileOpen}
                 className="md:hidden text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white"
               >
                 {mobileOpen ? <X size={20} /> : <Menu size={20} />}

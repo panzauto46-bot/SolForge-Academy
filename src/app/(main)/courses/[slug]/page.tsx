@@ -35,16 +35,16 @@ export default function CourseDetailPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">
-            404
+            {t('courseDetail.notFoundCode')}
           </h1>
           <p className="text-slate-500 dark:text-gray-400 mb-6">
-            Course not found
+            {t('courseDetail.notFound')}
           </p>
           <Link
             href="/courses"
             className="text-purple-600 dark:text-purple-400 hover:underline"
           >
-            &larr; Back to Courses
+            &larr; {t('courseDetail.backToCourses')}
           </Link>
         </div>
       </div>
@@ -350,7 +350,7 @@ export default function CourseDetailPage() {
                   )}
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-slate-500 dark:text-gray-400">
-                      Level
+                      {t('courseDetail.level')}
                     </span>
                     <span
                       className={`px-2 py-0.5 rounded-full text-xs font-semibold ${levelColors[course.level]}`}
