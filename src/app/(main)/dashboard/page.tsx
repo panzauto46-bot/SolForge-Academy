@@ -2,9 +2,10 @@
 
 import { useRouter } from 'next/navigation';
 import { useLang } from '@/contexts/LanguageContext';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth, xpProgressPercent, xpToNextLevel } from '@/contexts/AuthContext';
 import { courses, achievements } from '@/data/courses';
-import { Zap, Star, Flame, BookOpen, Award, Calendar, ChevronRight, Shield, ExternalLink } from 'lucide-react';
+import { Zap, Star, Flame, BookOpen, Award, Calendar, ChevronRight, Shield, ExternalLink, Loader } from 'lucide-react';
+import { useNFTs } from '@/hooks/useNFTs';
 
 export default function DashboardPage() {
   const { t } = useLang();
@@ -37,7 +38,9 @@ export default function DashboardPage() {
     calendarDays.push({ date: dateStr, active: user.streakDates.includes(dateStr) });
   }
 
-  const xpProgress = ((user.xp % 500) / 500) * 100;
+  const xpProgress = xpProgressPercent(user.xp);
+  const { current: xpInBand, needed: xpBandSize } = xpToNextLevel(user.xp);
+  const { certificates: blockchainCerts, isLoading: nftsLoading } = useNFTs(user.walletAddress);
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-gray-950 pt-20 transition-colors">
@@ -76,7 +79,7 @@ export default function DashboardPage() {
                 style={{ width: `${xpProgress}%` }}
               />
             </div>
-            <p className="text-slate-400 dark:text-gray-600 text-xs mt-1">{user.xp % 500}/500 to next level</p>
+            <p className="text-slate-400 dark:text-gray-600 text-xs mt-1">{Math.round(xpInBand)}/{xpBandSize} to next level</p>
           </div>
 
           <div className="p-5 rounded-2xl bg-white dark:bg-gray-900/80 border border-slate-200 dark:border-gray-800 backdrop-blur shadow-sm dark:shadow-none">
@@ -228,10 +231,60 @@ export default function DashboardPage() {
                 <Shield size={18} className="text-cyan-600 dark:text-cyan-400" />
                 <h3 className="text-slate-900 dark:text-white font-semibold">{t('dash.certificates')}</h3>
               </div>
-              {user.nftCertificates.length === 0 ? (
+
+              {/* Blockchain Certificates (Real cNFTs) */}
+              {user.walletAddress && (
+                <div className="mb-4">
+                  {nftsLoading ? (
+                    <div className="flex items-center gap-2 py-3 text-slate-400 dark:text-gray-500 text-sm">
+                      <Loader size={14} className="animate-spin" />
+                      {t('dash.loadingNfts')}
+                    </div>
+                  ) : blockchainCerts.length > 0 ? (
+                    <div className="space-y-3">
+                      {blockchainCerts.map((cert) => (
+                        <div key={cert.mintAddress} className="p-3 rounded-xl bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-900/30 dark:to-blue-900/30 border border-cyan-200 dark:border-cyan-500/20">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-xl overflow-hidden">
+                              {cert.image ? (
+                                <img src={cert.image} alt={cert.name} className="w-full h-full object-cover" />
+                              ) : (
+                                <span>🏅</span>
+                              )}
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <p className="text-slate-900 dark:text-white font-medium text-sm">{cert.name}</p>
+                                <span className="px-1.5 py-0.5 rounded-full bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 text-[10px] font-bold">
+                                  {t('dash.onChain')}
+                                </span>
+                              </div>
+                              <a
+                                href={`https://solscan.io/token/${cert.mintAddress}?cluster=devnet`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-slate-400 dark:text-gray-500 text-xs font-mono flex items-center gap-1 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors"
+                              >
+                                {cert.mintAddress.slice(0, 8)}...
+                                <ExternalLink size={10} />
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              )}
+
+              {/* Course Certificates (Mock / Local) */}
+              {user.nftCertificates.length === 0 && blockchainCerts.length === 0 ? (
                 <div className="text-center py-4">
                   <div className="text-4xl mb-2">🏆</div>
                   <p className="text-slate-400 dark:text-gray-500 text-sm">{t('dash.noCerts')}</p>
+                  {!user.walletAddress && (
+                    <p className="text-slate-400 dark:text-gray-500 text-xs mt-2">{t('dash.connectWalletForNfts')}</p>
+                  )}
                 </div>
               ) : (
                 <div className="space-y-3">

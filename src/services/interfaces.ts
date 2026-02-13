@@ -137,7 +137,7 @@ export class StubLessonCompletionService implements ILessonCompletionService {
       success: true,
       xpAwarded: 100,
       newTotalXp: lessons.size * 100,
-      newLevel: Math.floor((lessons.size * 100) / 500) + 1,
+      newLevel: Math.floor(Math.sqrt((lessons.size * 100) / 100)),
       transactionSignature: `stub_tx_${Date.now()}`,
       achievementsUnlocked: [],
     };

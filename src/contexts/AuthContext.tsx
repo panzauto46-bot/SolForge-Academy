@@ -59,7 +59,33 @@ const AuthContext = createContext<AuthContextType | null>(null);
 // ===== Helpers =====
 
 function calcLevel(xp: number): number {
-  return Math.floor(xp / 500) + 1;
+  return Math.floor(Math.sqrt(xp / 100));
+}
+
+/** XP required to reach a given level */
+export function xpForLevel(level: number): number {
+  return level * level * 100;
+}
+
+/** Progress percentage toward the next level (0-100) */
+export function xpProgressPercent(xp: number): number {
+  const currentLevel = calcLevel(xp);
+  const currentLevelXP = xpForLevel(currentLevel);
+  const nextLevelXP = xpForLevel(currentLevel + 1);
+  const bandSize = nextLevelXP - currentLevelXP;
+  if (bandSize <= 0) return 100;
+  return ((xp - currentLevelXP) / bandSize) * 100;
+}
+
+/** XP remaining until next level */
+export function xpToNextLevel(xp: number): { current: number; needed: number } {
+  const currentLevel = calcLevel(xp);
+  const currentLevelXP = xpForLevel(currentLevel);
+  const nextLevelXP = xpForLevel(currentLevel + 1);
+  return {
+    current: xp - currentLevelXP,
+    needed: nextLevelXP - currentLevelXP,
+  };
 }
 
 function createDefaultProfile(
@@ -68,7 +94,7 @@ function createDefaultProfile(
   const today = new Date().toISOString().split("T")[0];
   return {
     xp: 0,
-    level: 1,
+    level: 0,
     streak: 1,
     streakDates: [today],
     enrolledCourses: [],

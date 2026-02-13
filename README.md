@@ -68,7 +68,9 @@ src/
 │   │   ├── leaderboard/page.tsx  # Leaderboard
 │   │   └── profile/page.tsx      # User Profile
 │   ├── lesson/[courseId]/        # Split-screen Lesson View
-│   ├── api/auth/[...nextauth]/   # NextAuth API Route
+│   ├── api/
+│   │   ├── auth/[...nextauth]/   # NextAuth API Route
+│   │   └── nfts/[wallet]/        # Helius DAS API proxy (cNFT reading)
 │   ├── layout.tsx                # Root Layout
 │   ├── providers.tsx             # All Context Providers
 │   └── globals.css               # Global Styles
@@ -86,6 +88,8 @@ src/
 │   └── courses.ts                # 5 courses, 15 lessons, achievements
 ├── i18n/
 │   └── translations.ts           # EN, PT-BR, ES translations
+├── hooks/
+│   └── useNFTs.ts                # Custom hook for fetching on-chain cNFTs
 ├── services/
 │   └── interfaces.ts             # Service interfaces + stub implementations
 ├── lib/
@@ -206,7 +210,14 @@ This project is optimized for [Vercel](https://vercel.com):
 - [x] Service layer architecture (ServiceContext with stub implementations)
 - [x] i18n translations for all new features
 
-### Phase 5: Smart Contracts & Production (Next)
+### Phase 5: Killer Features (IDE & Gamification)
+- [x] In-browser Monaco Editor with syntax highlighting (Rust, TypeScript, JSON)
+- [x] Pass/Fail code checking with keyword-based validation
+- [x] XP Balance & Level system (Level = floor(sqrt(xp/100)))
+- [x] Streak calendar (28-day grid) & interactive leaderboard with user ranking
+- [x] Helius DAS API integration for reading on-chain cNFT certificates
+
+### Phase 6: Smart Contracts & Production (Next)
 - [ ] Anchor program integration for on-chain XP
 - [ ] Real cNFT certificate minting via Metaplex Bubblegum
 - [ ] On-chain leaderboard from token balances
