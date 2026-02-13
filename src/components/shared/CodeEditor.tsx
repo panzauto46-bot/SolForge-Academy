@@ -20,9 +20,10 @@ interface CodeEditorProps {
   starterCode: string;
   testKeyword: string;
   onPass: () => void;
+  onCodeChange?: (code: string) => void;
 }
 
-export function CodeEditor({ language, starterCode, testKeyword, onPass }: CodeEditorProps) {
+export function CodeEditor({ language, starterCode, testKeyword, onPass, onCodeChange }: CodeEditorProps) {
   const { t } = useLang();
   const { isDark } = useTheme();
   const [code, setCode] = useState(starterCode);
@@ -87,7 +88,11 @@ export function CodeEditor({ language, starterCode, testKeyword, onPass }: CodeE
           height="100%"
           language={monacoLang}
           value={code}
-          onChange={(v) => setCode(v || '')}
+          onChange={(v) => {
+            const val = v || '';
+            setCode(val);
+            onCodeChange?.(val);
+          }}
           theme={isDark ? 'vs-dark' : 'vs'}
           options={{
             fontSize: 14,

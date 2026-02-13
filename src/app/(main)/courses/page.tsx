@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useLang } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { courses } from '@/data/courses';
-import { BookOpen, Zap, ChevronRight, Lock, CheckCircle } from 'lucide-react';
+import { BookOpen, Zap, ChevronRight, Lock, CheckCircle, Clock } from 'lucide-react';
 import { AuthModal } from '@/components/shared/AuthModal';
 
 export default function CoursesPage() {
@@ -54,9 +55,10 @@ export default function CoursesPage() {
               const progress = isEnrolled ? (completedLessons / course.lessons.length) * 100 : 0;
 
               return (
-                <div
+                <Link
                   key={course.id}
-                  className="group relative rounded-2xl bg-white dark:bg-gray-900/80 border border-slate-200 dark:border-gray-800 overflow-hidden hover:border-slate-300 dark:hover:border-gray-700 transition-all shadow-sm hover:shadow-xl dark:shadow-none dark:hover:shadow-2xl dark:hover:shadow-purple-500/5"
+                  href={`/courses/${course.slug || course.id}`}
+                  className="group relative rounded-2xl bg-white dark:bg-gray-900/80 border border-slate-200 dark:border-gray-800 overflow-hidden hover:border-slate-300 dark:hover:border-gray-700 transition-all shadow-sm hover:shadow-xl dark:shadow-none dark:hover:shadow-2xl dark:hover:shadow-purple-500/5 cursor-pointer"
                 >
                   {/* Top gradient accent */}
                   <div className={`h-1.5 bg-gradient-to-r ${course.color}`} />
@@ -88,6 +90,12 @@ export default function CoursesPage() {
                         <Zap size={14} />
                         <span>{course.xpReward} XP</span>
                       </div>
+                      {course.estimatedDuration && (
+                        <div className="flex items-center gap-1.5 text-slate-400 dark:text-gray-500">
+                          <Clock size={14} />
+                          <span>{course.estimatedDuration}</span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Progress bar (if enrolled) */}
@@ -106,34 +114,28 @@ export default function CoursesPage() {
                       </div>
                     )}
 
-                    {/* Action Button */}
-                    {isCompleted ? (
-                      <button
-                        onClick={() => handleContinue(course.id)}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-green-50 dark:bg-green-600/10 border border-green-200 dark:border-green-500/30 text-green-700 dark:text-green-400 font-semibold text-sm transition-all hover:bg-green-100 dark:hover:bg-green-600/20"
-                      >
-                        <CheckCircle size={16} />
-                        {t('courses.completed')}
-                      </button>
-                    ) : isEnrolled ? (
-                      <button
-                        onClick={() => handleContinue(course.id)}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-semibold text-sm transition-all hover:from-purple-500 hover:to-cyan-500 shadow-lg shadow-purple-500/10"
-                      >
-                        {t('courses.continue')}
-                        <ChevronRight size={16} />
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => handleEnroll(course.id)}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-slate-100 dark:bg-gray-800 border border-slate-200 dark:border-gray-700 text-slate-700 dark:text-white font-semibold text-sm transition-all hover:bg-slate-200 dark:hover:bg-gray-700 hover:border-slate-300 dark:hover:border-gray-600 group"
-                      >
-                        {!isAuthenticated && <Lock size={14} className="text-slate-400 dark:text-gray-500" />}
-                        {t('courses.enroll')}
-                      </button>
-                    )}
+                    {/* Status indicator */}
+                    <div className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all">
+                      {isCompleted ? (
+                        <span className="flex items-center gap-2 text-green-700 dark:text-green-400">
+                          <CheckCircle size={16} />
+                          {t('courses.completed')}
+                        </span>
+                      ) : isEnrolled ? (
+                        <span className="flex items-center gap-2 text-purple-600 dark:text-purple-400">
+                          {t('courses.continue')}
+                          <ChevronRight size={16} />
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-2 text-slate-500 dark:text-gray-400">
+                          {!isAuthenticated && <Lock size={14} />}
+                          {t('courses.viewDetails') || 'View Details'}
+                          <ChevronRight size={16} />
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>

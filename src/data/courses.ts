@@ -8,28 +8,44 @@ export interface Lesson {
   solution: string;
   testKeyword: string;
   xpReward: number;
+  estimatedMinutes?: number;
 }
 
 export interface Course {
   id: string;
+  slug: string;
   title: string;
   description: string;
+  overview: string;
   icon: string;
   level: 'beginner' | 'intermediate' | 'advanced';
   xpReward: number;
   color: string;
+  estimatedDuration: string;
+  prerequisites: string[];
+  learningObjectives: string[];
   lessons: Lesson[];
 }
 
 export const courses: Course[] = [
   {
     id: 'solana-101',
+    slug: 'solana-101',
     title: 'Solana 101: Foundations',
     description: 'Learn the basics of the Solana blockchain — accounts, transactions, and the runtime model.',
+    overview: 'Dive deep into the foundations of Solana blockchain development. This course covers the core concepts every Solana developer needs to understand — from the unique account model to transaction processing and the runtime environment. You will write real Solana programs using Rust and gain hands-on experience with the fundamental building blocks of the ecosystem.',
     icon: '🌅',
     level: 'beginner',
     xpReward: 500,
     color: 'from-purple-500 to-indigo-600',
+    estimatedDuration: '1.5 hours',
+    prerequisites: [],
+    learningObjectives: [
+      'Understand the Solana account model and how state is stored',
+      'Write your first on-chain program using the msg! macro',
+      'Parse and handle instruction data in Solana programs',
+      'Navigate the Solana runtime and transaction lifecycle',
+    ],
     lessons: [
       {
         id: 'sol101-1',
@@ -59,6 +75,7 @@ pub fn process_instruction(
         solution: `msg!("Hello, Solana!");`,
         testKeyword: 'msg!',
         xpReward: 100,
+        estimatedMinutes: 15,
       },
       {
         id: 'sol101-2',
@@ -90,6 +107,7 @@ pub fn process_instruction(
         solution: `msg!("Account {} has {} lamports", account.key, account.lamports())`,
         testKeyword: 'lamports',
         xpReward: 100,
+        estimatedMinutes: 20,
       },
       {
         id: 'sol101-3',
@@ -120,17 +138,28 @@ pub fn process_instruction(
         solution: `match instruction_data[0]`,
         testKeyword: 'match',
         xpReward: 100,
+        estimatedMinutes: 25,
       },
     ],
   },
   {
     id: 'anchor-basics',
+    slug: 'anchor-basics',
     title: 'Anchor Framework Essentials',
     description: 'Master the Anchor framework for building Solana programs with less boilerplate.',
+    overview: 'Master the Anchor framework — the most popular toolkit for building Solana programs. Anchor abstracts away much of the boilerplate code required in native Solana development, letting you focus on business logic. Learn program structure, account validation with constraints, and custom error handling to build robust decentralized applications.',
     icon: '⚓',
     level: 'intermediate',
     xpReward: 750,
     color: 'from-emerald-500 to-teal-600',
+    estimatedDuration: '2 hours',
+    prerequisites: ['solana-101'],
+    learningObjectives: [
+      'Set up an Anchor project with declare_id! and #[program]',
+      'Define account structs with validation constraints',
+      'Implement custom error codes for better debugging',
+      'Build a complete Anchor program from scratch',
+    ],
     lessons: [
       {
         id: 'anchor-1',
@@ -155,6 +184,7 @@ pub struct Initialize {}`,
         solution: `pub fn initialize(ctx: Context<Initialize>) -> Result<()>`,
         testKeyword: 'initialize',
         xpReward: 150,
+        estimatedMinutes: 25,
       },
       {
         id: 'anchor-2',
@@ -182,6 +212,7 @@ pub struct CreateNote<'info> {
         solution: `#[account(init, payer = user`,
         testKeyword: '#[account(init',
         xpReward: 150,
+        estimatedMinutes: 30,
       },
       {
         id: 'anchor-3',
@@ -211,17 +242,28 @@ pub struct Validate {}`,
         solution: `#[error_code]`,
         testKeyword: 'error_code',
         xpReward: 150,
+        estimatedMinutes: 25,
       },
     ],
   },
   {
     id: 'solana-web3js',
+    slug: 'solana-web3js',
     title: 'Solana Web3.js Client',
     description: 'Build frontend applications that interact with Solana using @solana/web3.js.',
+    overview: 'Build powerful frontend applications that interact with the Solana blockchain using @solana/web3.js. This client-side course teaches you how to connect to Solana clusters, manage keypairs, request airdrops for testing, check balances, and send SOL transfer transactions — all essential skills for building Solana dApps.',
     icon: '🌐',
     level: 'beginner',
     xpReward: 500,
     color: 'from-orange-500 to-rose-600',
+    estimatedDuration: '1.5 hours',
+    prerequisites: [],
+    learningObjectives: [
+      'Establish connections to Solana devnet and other clusters',
+      'Generate and manage cryptographic keypairs',
+      'Request airdrops and check wallet balances',
+      'Create and send SOL transfer transactions',
+    ],
     lessons: [
       {
         id: 'web3-1',
@@ -249,6 +291,7 @@ main();`,
         solution: `new Connection(clusterApiUrl("devnet"))`,
         testKeyword: 'Connection',
         xpReward: 100,
+        estimatedMinutes: 15,
       },
       {
         id: 'web3-2',
@@ -277,6 +320,7 @@ main();`,
         solution: `requestAirdrop`,
         testKeyword: 'requestAirdrop',
         xpReward: 100,
+        estimatedMinutes: 20,
       },
       {
         id: 'web3-3',
@@ -311,17 +355,28 @@ main();`,
         solution: `SystemProgram.transfer`,
         testKeyword: 'SystemProgram.transfer',
         xpReward: 100,
+        estimatedMinutes: 25,
       },
     ],
   },
   {
     id: 'token-program',
+    slug: 'token-program',
     title: 'SPL Token Mastery',
     description: 'Create and manage tokens on Solana using the SPL Token program.',
+    overview: 'Unlock the power of fungible tokens on Solana with the SPL Token program. Learn how to create token mints, manage token accounts, mint new tokens, and transfer them between wallets. This course provides the foundation for building DeFi applications, governance tokens, and reward systems on Solana.',
     icon: '🪙',
     level: 'intermediate',
     xpReward: 750,
     color: 'from-yellow-500 to-amber-600',
+    estimatedDuration: '2 hours',
+    prerequisites: ['solana-web3js'],
+    learningObjectives: [
+      'Create and configure SPL Token mint accounts',
+      'Manage associated token accounts for users',
+      'Mint tokens with precise decimal control',
+      'Transfer SPL tokens securely between wallets',
+    ],
     lessons: [
       {
         id: 'token-1',
@@ -348,6 +403,7 @@ main();`,
         solution: `createMint`,
         testKeyword: 'createMint',
         xpReward: 150,
+        estimatedMinutes: 25,
       },
       {
         id: 'token-2',
@@ -377,6 +433,7 @@ main();`,
         solution: `mintTo`,
         testKeyword: 'mintTo',
         xpReward: 150,
+        estimatedMinutes: 25,
       },
       {
         id: 'token-3',
@@ -401,17 +458,28 @@ main();`,
         solution: `transfer`,
         testKeyword: 'transfer',
         xpReward: 150,
+        estimatedMinutes: 30,
       },
     ],
   },
   {
     id: 'nft-metaplex',
+    slug: 'nft-metaplex',
     title: 'NFTs with Metaplex',
     description: 'Create, mint, and manage NFTs using Metaplex on Solana.',
+    overview: 'Enter the world of NFTs on Solana with Metaplex — the leading NFT standard and toolkit. From setting up the Umi framework to minting both standard and compressed NFTs (cNFTs), this advanced course covers everything you need to build NFT-powered applications. Learn how Bubblegum and Merkle trees enable minting millions of NFTs at minimal cost.',
     icon: '🎨',
     level: 'advanced',
     xpReward: 1000,
     color: 'from-pink-500 to-violet-600',
+    estimatedDuration: '2.5 hours',
+    prerequisites: ['token-program'],
+    learningObjectives: [
+      'Initialize and configure the Metaplex Umi framework',
+      'Mint NFTs with custom metadata on Solana',
+      'Create Merkle trees for compressed NFT collections',
+      'Understand the economics of standard vs compressed NFTs',
+    ],
     lessons: [
       {
         id: 'nft-1',
@@ -436,6 +504,7 @@ main();`,
         solution: `createUmi`,
         testKeyword: 'createUmi',
         xpReward: 200,
+        estimatedMinutes: 25,
       },
       {
         id: 'nft-2',
@@ -463,6 +532,7 @@ main();`,
         solution: `createNft`,
         testKeyword: 'createNft',
         xpReward: 200,
+        estimatedMinutes: 30,
       },
       {
         id: 'nft-3',
@@ -492,6 +562,7 @@ main();`,
         solution: `createTree`,
         testKeyword: 'createTree',
         xpReward: 200,
+        estimatedMinutes: 35,
       },
     ],
   },

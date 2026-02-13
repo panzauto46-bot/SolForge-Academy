@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { WalletContextProvider } from "@/contexts/WalletProvider";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ServiceProvider } from "@/contexts/ServiceContext";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -13,7 +14,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <LanguageProvider>
           <WalletContextProvider>
             <AuthProvider>
-              {children}
+              <ServiceProvider>
+                {children}
+              </ServiceProvider>
             </AuthProvider>
           </WalletContextProvider>
         </LanguageProvider>

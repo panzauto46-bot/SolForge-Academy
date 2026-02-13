@@ -1,78 +1,107 @@
-# SolForge Academy
+<p align="center">
+  <img src="https://img.shields.io/badge/Solana-Devnet-14F195?style=for-the-badge&logo=solana&logoColor=white" alt="Solana Devnet" />
+  <img src="https://img.shields.io/badge/Next.js-16-000000?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js 16" />
+  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript 5" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-4-38BDF8?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS 4" />
+  <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="MIT License" />
+</p>
 
-> **The Ultimate Interactive Hub for Solana Native Builders**
+<h1 align="center">SolForge Academy</h1>
 
-SolForge Academy is a gamified, interactive learning platform for mastering Solana blockchain development. Built with **Next.js 16** (App Router), **TypeScript**, **Tailwind CSS**, and **shadcn/ui**.
+<p align="center">
+  <strong>The Ultimate Interactive Hub for Solana Native Builders</strong>
+</p>
 
-![SolForge Academy](https://img.shields.io/badge/Solana-Devnet-green?style=for-the-badge&logo=solana) ![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js) ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript) ![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8?style=for-the-badge&logo=tailwind-css)
+<p align="center">
+  A gamified, interactive learning platform for mastering Solana blockchain development.<br/>
+  Write real Solana programs in your browser, earn XP, collect NFT certificates, and compete on the leaderboard.
+</p>
+
+<p align="center">
+  <a href="https://sol-forge-academy.vercel.app">Live Demo</a> &bull;
+  <a href="#getting-started">Getting Started</a> &bull;
+  <a href="#features">Features</a> &bull;
+  <a href="#tech-stack">Tech Stack</a>
+</p>
+
+---
 
 ## Features
 
-- **In-Browser IDE** -- Write and test Rust, TypeScript, and Anchor code with Monaco Editor
-- **Web3 Gamification** -- Earn XP tokens, level up, maintain streaks, unlock achievements
-- **cNFT Certificates** -- Mint compressed NFT certificates via Metaplex Bubblegum
-- **Multi-Auth System** -- Connect with Phantom, Solflare, Google, or GitHub
-- **Multi-Language** -- English, Portuguese (BR), Spanish
-- **Dark/Light Mode** -- Glassmorphism design with theme toggle
+- **In-Browser Code Editor** -- Write and test Rust, TypeScript, and Anchor code with Monaco Editor (VS Code engine)
+- **Course Detail Pages** -- Rich course pages with overview, learning objectives, prerequisites, and full syllabus
+- **Split-Screen Learning** -- Left panel for lesson content (Markdown), right panel for live code editor
+- **Web3 Gamification** -- Earn XP tokens, level up, maintain daily streaks, unlock achievements
+- **cNFT Certificates** -- Mint compressed NFT certificates via Metaplex Bubblegum on course completion
+- **Multi-Auth System** -- Connect with Phantom, Solflare (Solana wallets), Google, or GitHub (OAuth)
+- **Multi-Language** -- Full i18n support for English, Portuguese (BR), and Spanish
+- **Dark/Light Mode** -- Modern glassmorphism design with seamless theme toggle
 - **Leaderboard** -- Compete with other builders globally
-- **Clean Architecture** -- Service interfaces ready for real Smart Contract integration
+- **Service Layer Architecture** -- Clean service interfaces ready for real Smart Contract integration
 
 ## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| Framework | Next.js 16 (App Router) |
-| Language | TypeScript 5 |
-| Styling | Tailwind CSS 4 + shadcn/ui |
-| Code Editor | Monaco Editor (@monaco-editor/react) |
-| Icons | Lucide React |
-| UI Components | Radix UI (via shadcn/ui) |
-| Deployment | Vercel |
+| **Framework** | Next.js 16 (App Router) |
+| **Language** | TypeScript 5 |
+| **Styling** | Tailwind CSS 4 + shadcn/ui (New York style) |
+| **Code Editor** | Monaco Editor (`@monaco-editor/react`) |
+| **Markdown** | react-markdown |
+| **Authentication** | NextAuth.js v5 (Google, GitHub) + Solana Wallet Adapter (Phantom, Solflare) |
+| **Blockchain** | Solana Web3.js + Wallet Adapter |
+| **Icons** | Lucide React |
+| **UI Primitives** | Radix UI (via shadcn/ui) |
+| **Deployment** | Vercel |
 
 ## Project Structure
 
 ```
 src/
-├── app/                        # Next.js App Router
-│   ├── (main)/                 # Route group with Navbar + Footer
-│   │   ├── page.tsx            # Home / Landing Page
-│   │   ├── courses/page.tsx    # Course Catalog
-│   │   ├── dashboard/page.tsx  # Builder Dashboard
-│   │   ├── leaderboard/page.tsx # Leaderboard
-│   │   └── profile/page.tsx    # User Profile
-│   ├── lesson/[courseId]/      # Dynamic Lesson View
-│   ├── layout.tsx              # Root Layout
-│   ├── providers.tsx           # Context Providers
-│   └── globals.css             # Global Styles
+├── app/                          # Next.js App Router
+│   ├── (main)/                   # Route group with Navbar + Footer
+│   │   ├── page.tsx              # Home / Landing Page
+│   │   ├── courses/
+│   │   │   ├── page.tsx          # Course Catalog Grid
+│   │   │   └── [slug]/page.tsx   # Course Detail Page (NEW)
+│   │   ├── dashboard/page.tsx    # Builder Dashboard
+│   │   ├── leaderboard/page.tsx  # Leaderboard
+│   │   └── profile/page.tsx      # User Profile
+│   ├── lesson/[courseId]/        # Split-screen Lesson View
+│   ├── api/auth/[...nextauth]/   # NextAuth API Route
+│   ├── layout.tsx                # Root Layout
+│   ├── providers.tsx             # All Context Providers
+│   └── globals.css               # Global Styles
 ├── components/
-│   ├── layout/                 # Layout components
-│   │   ├── Navbar.tsx          # Navigation bar
-│   │   └── Footer.tsx          # Footer
-│   ├── shared/                 # Reusable components
-│   │   ├── AuthModal.tsx       # Authentication modal
-│   │   ├── CodeEditor.tsx      # Monaco code editor
-│   │   └── Hero.tsx            # Hero section
-│   └── ui/                     # shadcn/ui components
-├── contexts/                   # React Context providers
-│   ├── AuthContext.tsx          # Authentication state
-│   ├── LanguageContext.tsx      # i18n translations
-│   └── ThemeContext.tsx         # Dark/Light theme
+│   ├── layout/                   # Navbar, Footer
+│   ├── shared/                   # AuthModal, CodeEditor, Hero
+│   └── ui/                       # shadcn/ui (badge, button, dialog, etc.)
+├── contexts/
+│   ├── AuthContext.tsx            # Unified auth (wallet + social) + game state
+│   ├── ServiceContext.tsx         # Service layer (enrollment, lesson completion)
+│   ├── LanguageContext.tsx        # i18n context
+│   ├── ThemeContext.tsx           # Dark/Light theme
+│   └── WalletProvider.tsx        # Solana Wallet Adapter
 ├── data/
-│   └── courses.ts              # Course & lesson data
+│   └── courses.ts                # 5 courses, 15 lessons, achievements
 ├── i18n/
-│   └── translations.ts         # EN, PT-BR, ES translations
+│   └── translations.ts           # EN, PT-BR, ES translations
 ├── services/
-│   └── interfaces.ts           # Smart contract service interfaces
-└── lib/
-    └── utils.ts                # Utility functions (cn)
+│   └── interfaces.ts             # Service interfaces + stub implementations
+├── lib/
+│   ├── auth.ts                   # NextAuth.js configuration
+│   └── utils.ts                  # Utility functions
+└── types/
+    └── next-auth.d.ts            # NextAuth type augmentations
 ```
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+
-- npm or yarn
+- **Node.js** 18.17 or later
+- **npm** 9+ (or yarn/pnpm)
+- A Solana wallet browser extension (optional, for wallet auth): [Phantom](https://phantom.app/) or [Solflare](https://solflare.com/)
 
 ### Installation
 
@@ -84,13 +113,39 @@ cd SolForge-Academy
 # Install dependencies
 npm install
 
-# Start development server
+# Copy environment variables template
+cp .env.local.example .env.local
+```
+
+### Environment Variables
+
+Create a `.env.local` file with the following variables:
+
+```env
+# NextAuth.js
+NEXTAUTH_SECRET=your_random_secret_here    # Required - generate with: openssl rand -base64 32
+NEXTAUTH_URL=http://localhost:3000          # Required - your app URL
+
+# Google OAuth (optional - for Google login)
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# GitHub OAuth (optional - for GitHub login)
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+```
+
+> **Note:** Social login (Google/GitHub) requires OAuth credentials. Wallet connection works without any environment variables.
+
+### Development
+
+```bash
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to see the app.
 
-### Build
+### Build & Production
 
 ```bash
 npm run build
@@ -99,45 +154,82 @@ npm start
 
 ## Deployment (Vercel)
 
-This project is optimized for deployment on [Vercel](https://vercel.com):
+This project is optimized for [Vercel](https://vercel.com):
 
 1. Push your code to GitHub
 2. Import the repository on [Vercel Dashboard](https://vercel.com/new)
-3. Vercel auto-detects Next.js -- no extra configuration needed
-4. Click **Deploy**
+3. Add environment variables in **Settings > Environment Variables**:
+   - `NEXTAUTH_SECRET`
+   - `NEXTAUTH_URL` (your Vercel domain, e.g., `https://your-app.vercel.app`)
+   - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`
+   - `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`
+4. Deploy -- Vercel auto-detects Next.js
+
+> **OAuth Callback URLs:**
+> - Google: `https://your-domain.vercel.app/api/auth/callback/google`
+> - GitHub: `https://your-domain.vercel.app/api/auth/callback/github`
+
+## Courses
+
+| # | Course | Level | Lessons | XP |
+|---|--------|-------|---------|-----|
+| 1 | Solana 101: Foundations | Beginner | 3 | 800 |
+| 2 | Anchor Framework Essentials | Intermediate | 3 | 1,200 |
+| 3 | Solana Web3.js Client | Beginner | 3 | 800 |
+| 4 | SPL Token Mastery | Intermediate | 3 | 1,200 |
+| 5 | NFTs with Metaplex | Advanced | 3 | 1,600 |
 
 ## Roadmap
 
-### Phase 1: Concept & UI/UX (DONE)
+### Phase 1: Concept & UI/UX
 - [x] Theme & Design (Dark Mode Glassmorphism)
 - [x] Landing Page (Hero, Features, Stats)
 - [x] Course Catalog (Card UI)
-- [x] Multi-Auth Modal (Solana Wallet + Google/GitHub)
+- [x] Multi-Auth Modal Design
 
-### Phase 2: Next.js Migration & Architecture (DONE)
-- [x] Next.js 16 (App Router) with TypeScript & Tailwind CSS
+### Phase 2: Next.js Migration & Architecture
+- [x] Next.js 16 (App Router) + TypeScript + Tailwind CSS 4
 - [x] shadcn/ui + Radix for interactive components
-- [x] Reusable React components
+- [x] Reusable React components & route groups
 - [x] Routing (/courses, /dashboard, /leaderboard, /profile)
 
-### Phase 3: Backend & Smart Contracts (Next)
-- [ ] Solana program integration (Anchor)
-- [ ] Real wallet connection (Phantom, Solflare)
-- [ ] On-chain XP token system
-- [ ] cNFT certificate minting via Metaplex Bubblegum
-- [ ] Leaderboard from on-chain data
+### Phase 3: Web3 & Authentication
+- [x] Solana Wallet Adapter (Phantom, Solflare)
+- [x] NextAuth.js v5 (Google, GitHub OAuth)
+- [x] Unified AuthContext (wallet + social)
+- [x] Environment variables & Vercel deployment
 
-### Phase 4: Production
+### Phase 4: LMS Engine & Content
+- [x] Extended course data model (overview, objectives, prerequisites, syllabus)
+- [x] Course detail pages (/courses/[slug])
+- [x] Enhanced split-screen lesson view with Markdown rendering
+- [x] Service layer architecture (ServiceContext with stub implementations)
+- [x] i18n translations for all new features
+
+### Phase 5: Smart Contracts & Production (Next)
+- [ ] Anchor program integration for on-chain XP
+- [ ] Real cNFT certificate minting via Metaplex Bubblegum
+- [ ] On-chain leaderboard from token balances
 - [ ] Database integration (PostgreSQL / Supabase)
-- [ ] Real authentication (NextAuth.js)
-- [ ] API routes for course progress
-- [ ] SEO optimization
-- [ ] Performance optimization
+- [ ] SEO & performance optimization
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-MIT
+This project is licensed under the MIT License.
 
 ---
 
-Built with love for the Solana ecosystem
+<p align="center">
+  Built with love for the Solana ecosystem<br/>
+  <sub>SolForge Academy &copy; 2025-2026</sub>
+</p>
