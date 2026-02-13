@@ -131,12 +131,21 @@ export function Navbar() {
                 <div className="flex items-center gap-2">
                   <Link
                     href="/dashboard"
-                    className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center text-white font-bold text-sm"
+                    className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center text-white font-bold text-sm overflow-hidden"
                   >
-                    {user?.avatar}
+                    {user?.image ? (
+                      <img src={user.image} alt={user.displayName} className="w-full h-full object-cover" />
+                    ) : (
+                      user?.avatar
+                    )}
                   </Link>
+                  {user?.walletAddress && (
+                    <span className="hidden lg:inline text-xs font-mono text-slate-400 dark:text-gray-500">
+                      {user.walletAddress.slice(0, 4)}..{user.walletAddress.slice(-4)}
+                    </span>
+                  )}
                   <button
-                    onClick={logout}
+                    onClick={() => logout()}
                     className="hidden sm:block text-sm text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white transition-colors"
                   >
                     {t('nav.logout')}

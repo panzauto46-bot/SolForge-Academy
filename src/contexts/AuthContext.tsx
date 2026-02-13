@@ -1,13 +1,28 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+  type ReactNode,
+} from "react";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useSession, signOut as nextAuthSignOut } from "next-auth/react";
+
+// ===== Types =====
+
+export type AuthProviderType = "phantom" | "solflare" | "google" | "github";
 
 export interface UserProfile {
   id: string;
   displayName: string;
   avatar: string;
+  email?: string;
+  image?: string;
   walletAddress?: string;
-  authProvider: 'phantom' | 'solflare' | 'google' | 'github';
+  authProvider: AuthProviderType;
   xp: number;
   level: number;
   streak: number;
@@ -16,13 +31,20 @@ export interface UserProfile {
   completedLessons: string[];
   completedCourses: string[];
   achievements: string[];
-  nftCertificates: { courseId: string; mintAddress: string; mintedAt: string }[];
+  nftCertificates: {
+    courseId: string;
+    mintAddress: string;
+    mintedAt: string;
+  }[];
 }
 
 interface AuthContextType {
   user: UserProfile | null;
   isAuthenticated: boolean;
-  login: (provider: 'phantom' | 'solflare' | 'google' | 'github') => void;
+  isLoading: boolean;
+  walletConnected: boolean;
+  loginWithWallet: () => void;
+  loginWithSocial: (provider: "google" | "github") => void;
   logout: () => void;
   addXP: (amount: number) => void;
   enrollCourse: (courseId: string) => void;
@@ -34,50 +56,165 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-function generateWallet(): string {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz123456789';
-  let result = '';
-  for (let i = 0; i < 44; i++) result += chars[Math.floor(Math.random() * chars.length)];
-  return result;
-}
+// ===== Helpers =====
 
 function calcLevel(xp: number): number {
   return Math.floor(xp / 500) + 1;
 }
 
+function createDefaultProfile(
+  overrides: Partial<UserProfile> & Pick<UserProfile, "id" | "displayName" | "avatar" | "authProvider">
+): UserProfile {
+  const today = new Date().toISOString().split("T")[0];
+  return {
+    xp: 0,
+    level: 1,
+    streak: 1,
+    streakDates: [today],
+    enrolledCourses: [],
+    completedLessons: [],
+    completedCourses: [],
+    achievements: ["first_login"],
+    nftCertificates: [],
+    ...overrides,
+  };
+}
+
+function detectWalletProvider(walletName: string | null): "phantom" | "solflare" {
+  if (!walletName) return "phantom";
+  const lower = walletName.toLowerCase();
+  if (lower.includes("solflare")) return "solflare";
+  return "phantom";
+}
+
+// ===== Provider Component =====
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null);
+  const [hasInitialized, setHasInitialized] = useState(false);
 
-  const login = useCallback((provider: 'phantom' | 'solflare' | 'google' | 'github') => {
-    const names: Record<string, string> = {
-      phantom: 'Phantom Builder',
-      solflare: 'Solflare Dev',
-      google: 'Google Builder',
-      github: 'GitHub Builder',
-    };
-    const today = new Date().toISOString().split('T')[0];
-    setUser({
-      id: crypto.randomUUID(),
-      displayName: names[provider],
-      avatar: provider[0].toUpperCase(),
-      authProvider: provider,
-      walletAddress: ['phantom', 'solflare'].includes(provider) ? generateWallet() : undefined,
-      xp: 0,
-      level: 1,
-      streak: 1,
-      streakDates: [today],
-      enrolledCourses: [],
-      completedLessons: [],
-      completedCourses: [],
-      achievements: ['first_login'],
-      nftCertificates: [],
-    });
-  }, []);
+  // Solana Wallet state
+  const {
+    publicKey,
+    connected: walletConnected,
+    wallet,
+    disconnect: walletDisconnect,
+    select,
+    wallets,
+  } = useWallet();
 
-  const logout = useCallback(() => setUser(null), []);
+  // NextAuth session state
+  const { data: session, status: sessionStatus } = useSession();
+
+  // In NextAuth v5 beta, status can be "loading" | "authenticated" | "unauthenticated"
+  // but TypeScript types may not include "loading" — we handle all cases safely
+  const isLoading = (sessionStatus as string) === "loading";
+
+  // ===== Sync Solana Wallet Connection → UserProfile =====
+  useEffect(() => {
+    if (walletConnected && publicKey && !user) {
+      const provider = detectWalletProvider(wallet?.adapter.name ?? null);
+      const address = publicKey.toBase58();
+
+      setUser(
+        createDefaultProfile({
+          id: address,
+          displayName: `${provider === "solflare" ? "Solflare" : "Phantom"} Builder`,
+          avatar: provider[0].toUpperCase(),
+          walletAddress: address,
+          authProvider: provider,
+        })
+      );
+    }
+
+    // If wallet disconnects while wallet-auth user is active, logout
+    if (!walletConnected && user?.authProvider && ["phantom", "solflare"].includes(user.authProvider)) {
+      setUser(null);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [walletConnected, publicKey]);
+
+  // ===== Sync NextAuth Session → UserProfile =====
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (session?.user && !user) {
+      const provider = ((session.user as Record<string, unknown>).provider as string) || "google";
+      const authProvider: AuthProviderType =
+        provider === "github" ? "github" : "google";
+
+      setUser(
+        createDefaultProfile({
+          id: (session.user as Record<string, unknown>).id as string || crypto.randomUUID(),
+          displayName: session.user.name || `${authProvider === "github" ? "GitHub" : "Google"} Builder`,
+          avatar: session.user.name?.[0]?.toUpperCase() || authProvider[0].toUpperCase(),
+          email: session.user.email || undefined,
+          image: session.user.image || undefined,
+          authProvider,
+        })
+      );
+    }
+
+    // If session ends while social-auth user is active, logout
+    if (!session && user?.authProvider && ["google", "github"].includes(user.authProvider) && hasInitialized) {
+      setUser(null);
+    }
+
+    if (!hasInitialized && !isLoading) {
+      setHasInitialized(true);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, sessionStatus]);
+
+  // ===== Login Methods =====
+
+  const loginWithWallet = useCallback(() => {
+    // This triggers the Solana wallet modal/popup
+    // The wallet adapter handles the connection flow
+    // After connecting, the useEffect above will create the user profile
+    // If no wallet is connected, we try to open the first available wallet
+    if (!walletConnected && wallets.length > 0) {
+      // Select the first wallet (usually Phantom) to trigger connect
+      select(wallets[0].adapter.name);
+    }
+  }, [walletConnected, wallets, select]);
+
+  const loginWithSocial = useCallback(
+    async (provider: "google" | "github") => {
+      // NextAuth signIn is imported dynamically to avoid server issues
+      const { signIn } = await import("next-auth/react");
+      await signIn(provider, { redirect: false });
+    },
+    []
+  );
+
+  const logout = useCallback(async () => {
+    const currentProvider = user?.authProvider;
+    setUser(null);
+
+    // Disconnect wallet if wallet-based auth
+    if (currentProvider && ["phantom", "solflare"].includes(currentProvider)) {
+      try {
+        await walletDisconnect();
+      } catch {
+        // Wallet might already be disconnected
+      }
+    }
+
+    // Sign out from NextAuth if social-based auth
+    if (currentProvider && ["google", "github"].includes(currentProvider)) {
+      try {
+        await nextAuthSignOut({ redirect: false });
+      } catch {
+        // Session might already be expired
+      }
+    }
+  }, [user, walletDisconnect]);
+
+  // ===== Game State Methods (unchanged) =====
 
   const addXP = useCallback((amount: number) => {
-    setUser(prev => {
+    setUser((prev) => {
       if (!prev) return prev;
       const newXP = prev.xp + amount;
       return { ...prev, xp: newXP, level: calcLevel(newXP) };
@@ -85,23 +222,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const enrollCourse = useCallback((courseId: string) => {
-    setUser(prev => {
+    setUser((prev) => {
       if (!prev || prev.enrolledCourses.includes(courseId)) return prev;
       return { ...prev, enrolledCourses: [...prev.enrolledCourses, courseId] };
     });
   }, []);
 
   const completeLesson = useCallback((lessonId: string) => {
-    setUser(prev => {
+    setUser((prev) => {
       if (!prev || prev.completedLessons.includes(lessonId)) return prev;
-      return { ...prev, completedLessons: [...prev.completedLessons, lessonId] };
+      return {
+        ...prev,
+        completedLessons: [...prev.completedLessons, lessonId],
+      };
     });
   }, []);
 
   const completeCourse = useCallback((courseId: string) => {
-    setUser(prev => {
+    setUser((prev) => {
       if (!prev || prev.completedCourses.includes(courseId)) return prev;
-      const mintAddress = generateWallet();
+      const chars =
+        "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz123456789";
+      let mintAddress = "";
+      for (let i = 0; i < 44; i++)
+        mintAddress += chars[Math.floor(Math.random() * chars.length)];
       return {
         ...prev,
         completedCourses: [...prev.completedCourses, courseId],
@@ -114,18 +258,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addAchievement = useCallback((achievementId: string) => {
-    setUser(prev => {
+    setUser((prev) => {
       if (!prev || prev.achievements.includes(achievementId)) return prev;
-      return { ...prev, achievements: [...prev.achievements, achievementId] };
+      return {
+        ...prev,
+        achievements: [...prev.achievements, achievementId],
+      };
     });
   }, []);
 
   const recordStreak = useCallback(() => {
-    setUser(prev => {
+    setUser((prev) => {
       if (!prev) return prev;
-      const today = new Date().toISOString().split('T')[0];
+      const today = new Date().toISOString().split("T")[0];
       if (prev.streakDates.includes(today)) return prev;
-      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+      const yesterday = new Date(Date.now() - 86400000)
+        .toISOString()
+        .split("T")[0];
       const isConsecutive = prev.streakDates.includes(yesterday);
       return {
         ...prev,
@@ -140,7 +289,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         isAuthenticated: !!user,
-        login,
+        isLoading,
+        walletConnected,
+        loginWithWallet,
+        loginWithSocial,
         logout,
         addXP,
         enrollCourse,
@@ -157,6 +309,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be within AuthProvider');
+  if (!ctx) throw new Error("useAuth must be within AuthProvider");
   return ctx;
 }
