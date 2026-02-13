@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { WalletReadyState } from "@solana/wallet-adapter-base";
 import { useLang } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader } from "lucide-react";
@@ -12,6 +13,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+const WALLET_URLS: Record<string, string> = {
+  phantom: "https://phantom.app/",
+  solflare: "https://solflare.com/",
+};
+
 interface AuthModalProps {
   open: boolean;
   onClose: () => void;
@@ -20,7 +26,7 @@ interface AuthModalProps {
 export function AuthModal({ open, onClose }: AuthModalProps) {
   const { t } = useLang();
   const { loginWithSocial, isAuthenticated } = useAuth();
-  const { select, wallets, connecting } = useWallet();
+  const { select, wallets, connecting, connect } = useWallet();
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
 
   // Close modal if user just authenticated
@@ -28,16 +34,43 @@ export function AuthModal({ open, onClose }: AuthModalProps) {
     onClose();
   }
 
-  const handleWalletConnect = (walletName: string) => {
+  const handleWalletConnect = async (walletName: string) => {
     // Find the wallet adapter by name
     const walletAdapter = wallets.find(
       (w) => w.adapter.name.toLowerCase().includes(walletName.toLowerCase())
     );
-    if (walletAdapter) {
-      select(walletAdapter.adapter.name);
+
+    if (!walletAdapter) {
+      // Wallet not found at all — open download page
+      window.open(WALLET_URLS[walletName] || "https://phantom.app/", "_blank");
+      return;
     }
-    // The wallet adapter will handle the popup/connection
-    // AuthContext useEffect will detect the connection and create user profile
+
+    // Check if wallet extension is installed
+    const ready = walletAdapter.readyState;
+    if (
+      ready === WalletReadyState.NotDetected ||
+      ready === WalletReadyState.Unsupported
+    ) {
+      // Extension not installed — open download page
+      window.open(WALLET_URLS[walletName] || walletAdapter.adapter.url, "_blank");
+      return;
+    }
+
+    // Wallet is installed — select and connect
+    try {
+      select(walletAdapter.adapter.name);
+      // Small delay to let select() propagate, then connect
+      setTimeout(async () => {
+        try {
+          await connect();
+        } catch {
+          // User may have rejected the connection — that's OK
+        }
+      }, 100);
+    } catch {
+      // Error selecting wallet
+    }
   };
 
   const handleSocialLogin = async (provider: "google" | "github") => {
