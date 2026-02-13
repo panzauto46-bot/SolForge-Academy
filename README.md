@@ -18,10 +18,11 @@
 </p>
 
 <p align="center">
-  <a href="https://sol-forge-academy.vercel.app">Live Demo</a> &bull;
+  <a href="https://solforge-academy.vercel.app">Live Demo</a> &bull;
   <a href="#getting-started">Getting Started</a> &bull;
   <a href="#features">Features</a> &bull;
-  <a href="#tech-stack">Tech Stack</a>
+  <a href="#tech-stack">Tech Stack</a> &bull;
+  <a href="./ARCHITECTURE.md">Architecture</a>
 </p>
 
 ---
@@ -49,9 +50,11 @@
 | **Code Editor** | Monaco Editor (`@monaco-editor/react`) |
 | **Markdown** | react-markdown |
 | **Authentication** | NextAuth.js v5 (Google, GitHub) + Solana Wallet Adapter (Phantom, Solflare) |
-| **Blockchain** | Solana Web3.js + Wallet Adapter |
+| **Blockchain** | Solana Web3.js + Wallet Adapter + Helius DAS API |
 | **Icons** | Lucide React |
 | **UI Primitives** | Radix UI (via shadcn/ui) |
+| **Error Monitoring** | Sentry (client + server + edge) |
+| **Analytics** | Google Analytics 4 (via @next/third-parties) |
 | **Deployment** | Vercel |
 
 ## Project Structure
@@ -126,9 +129,9 @@ cp .env.local.example .env.local
 Create a `.env.local` file with the following variables:
 
 ```env
-# NextAuth.js
-NEXTAUTH_SECRET=your_random_secret_here    # Required - generate with: openssl rand -base64 32
-NEXTAUTH_URL=http://localhost:3000          # Required - your app URL
+# NextAuth.js (Required)
+NEXTAUTH_SECRET=your_random_secret_here    # generate with: openssl rand -base64 32
+NEXTAUTH_URL=http://localhost:3000
 
 # Google OAuth (optional - for Google login)
 GOOGLE_CLIENT_ID=your_google_client_id
@@ -137,9 +140,22 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 # GitHub OAuth (optional - for GitHub login)
 GITHUB_CLIENT_ID=your_github_client_id
 GITHUB_CLIENT_SECRET=your_github_client_secret
+
+# Solana (optional - defaults shown)
+NEXT_PUBLIC_SOLANA_NETWORK=devnet
+NEXT_PUBLIC_SOLANA_RPC_URL=https://api.devnet.solana.com
+
+# Helius DAS API (optional - for reading on-chain cNFT certificates)
+HELIUS_API_KEY=your_helius_api_key
+
+# Google Analytics 4 (optional)
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+
+# Sentry Error Monitoring (optional)
+NEXT_PUBLIC_SENTRY_DSN=https://examplePublicKey@o0.ingest.sentry.io/0
 ```
 
-> **Note:** Social login (Google/GitHub) requires OAuth credentials. Wallet connection works without any environment variables.
+> **Note:** Only `NEXTAUTH_SECRET` and `NEXTAUTH_URL` are required. All other variables are optional -- features gracefully degrade when not configured. Wallet connection works without any environment variables.
 
 ### Development
 
@@ -163,10 +179,13 @@ This project is optimized for [Vercel](https://vercel.com):
 1. Push your code to GitHub
 2. Import the repository on [Vercel Dashboard](https://vercel.com/new)
 3. Add environment variables in **Settings > Environment Variables**:
-   - `NEXTAUTH_SECRET`
+   - `NEXTAUTH_SECRET` (required)
    - `NEXTAUTH_URL` (your Vercel domain, e.g., `https://your-app.vercel.app`)
-   - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`
-   - `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`
+   - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` (for Google OAuth)
+   - `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` (for GitHub OAuth)
+   - `HELIUS_API_KEY` (for on-chain cNFT reading)
+   - `NEXT_PUBLIC_GA_MEASUREMENT_ID` (for Google Analytics)
+   - `NEXT_PUBLIC_SENTRY_DSN` (for error monitoring)
 4. Deploy -- Vercel auto-detects Next.js
 
 > **OAuth Callback URLs:**
@@ -217,12 +236,19 @@ This project is optimized for [Vercel](https://vercel.com):
 - [x] Streak calendar (28-day grid) & interactive leaderboard with user ranking
 - [x] Helius DAS API integration for reading on-chain cNFT certificates
 
-### Phase 6: Smart Contracts & Production (Next)
+### Phase 6: Final Polish
+- [x] Complete i18n coverage (100+ keys across EN, PT-BR, ES)
+- [x] Google Analytics 4 integration
+- [x] Sentry error monitoring (client + server + edge)
+- [x] Lighthouse accessibility optimizations (skip links, ARIA, semantic HTML)
+- [x] Technical documentation (README.md, ARCHITECTURE.md)
+
+### Phase 7: Smart Contracts & Production (Next)
 - [ ] Anchor program integration for on-chain XP
 - [ ] Real cNFT certificate minting via Metaplex Bubblegum
 - [ ] On-chain leaderboard from token balances
 - [ ] Database integration (PostgreSQL / Supabase)
-- [ ] SEO & performance optimization
+- [ ] Advanced SEO & performance optimization
 
 ## Contributing
 
