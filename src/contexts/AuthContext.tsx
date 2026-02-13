@@ -183,7 +183,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (provider: "google" | "github") => {
       // NextAuth signIn is imported dynamically to avoid server issues
       const { signIn } = await import("next-auth/react");
-      await signIn(provider, { redirect: false });
+      // OAuth providers need redirect to their login page
+      await signIn(provider, { callbackUrl: window.location.href });
     },
     []
   );
